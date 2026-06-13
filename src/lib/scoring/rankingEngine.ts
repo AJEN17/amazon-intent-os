@@ -6,46 +6,55 @@ export const rankAndFlagAlternatives = (
   userProfile: UserProfile
 ): RankedItem[] => {
   
-  // 1. Calculate base scores and apply personalization
+  // 1. Calculate base scores and apply dynamic surge pricing
   let scoredItems: RankedItem[] = inventory.map(item => {
-    // Scoring Formula: (Freq * 0.5) - (ETA * 2) - (Price * 0.01)
-    let score = (item.purchase_frequency_rank * 0.5) - (item.eta_mins * 2) - (item.base_price * 0.01);
+    // Dynamic Pricing: Base price * surge multiplier
+    const currentPrice = item.base_price * item.surge_multiplier;
+
+    // Advanced Scoring Formula:
+    // + Points for high purchase frequency
+    // - Negative points for long ETAs (Speed is king in quick commerce)
+    // - Negative points for high prices
+    let score = (item.purchase_frequency_rank * 0.8) - (item.eta_mins * 3) - (currentPrice * 0.05);
     
+    // Personalization Boost: If the user loves this brand, boost its score heavily
     if (userProfile.preferred_brands.includes(item.brand)) {
-      score += 50; // Historical Personalization Boost
+      score += 75; 
     }
     
-    return { ...item, score, is_alternative: false };
+    return { 
+      ...item, 
+      base_price: Math.round(currentPrice), // Update the price the user actually sees
+      score, 
+      is_alternative: false 
+    };
   });
 
-  // 2. Sort by highest score
+  // 2. Sort by highest score to get the absolute best options
   scoredItems.sort((a, b) => b.score - a.score);
 
   // 3. Process stock checks and dynamic alternative flags
   let finalTopItems: RankedItem[] = [];
   let isAlternativeTriggered = false;
-  let originalPrice = 0;
-  let originalEta = 0;
+  let originalBrand = "";
 
   for (const currentItem of scoredItems) {
-    // Top personalized item is out of stock
+    // If the #1 best item is out of stock, skip it and flag that we need an alternative
     if (currentItem.stock_count === 0 && finalTopItems.length === 0) {
       isAlternativeTriggered = true;
-      originalPrice = currentItem.base_price;
-      originalEta = currentItem.eta_mins;
-      continue; // Skip this item entirely
+      originalBrand = currentItem.brand;
+      continue; 
     }
+
+    // Skip any subsequent out-of-stock items (we only show in-stock items)
+    if (currentItem.stock_count === 0) continue;
 
     let processedItem = { ...currentItem };
 
-    // Apply the Alternative Banner to the next best item if triggered
+    // Apply the Alternative Banner to the NEXT best item
     if (isAlternativeTriggered && finalTopItems.length === 0) {
       processedItem.is_alternative = true;
-      
-      const savings = originalPrice - processedItem.base_price;
-      const timeSaved = originalEta - processedItem.eta_mins;
-      
-      processedItem.alternative_message = `Preferred brand out. Suggested Substitute: ${processedItem.brand} (Saves ₹${savings > 0 ? savings : 0} + ${timeSaved > 0 ? timeSaved : 0} mins faster)`;
+      processedItem.alternative_message = `${originalBrand} is out. Suggested Substitute: ${processedItem.brand}`;
     }
 
     finalTopItems.push(processedItem);
