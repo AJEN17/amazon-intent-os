@@ -4,24 +4,22 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCrisisStore } from "@/store/useCrisisStore";
+import { useSystemStore } from "@/store/useSystemStore";
 import { CloudLightning, X } from "lucide-react";
 
 export default function NudgeModal() {
   const [isOpen, setIsOpen] = useState(false);
   const triggerCrisis = useCrisisStore((state) => state.triggerCrisis);
 
-  useEffect(() => {
-    // Check local storage records periodically to mock ambient contextual triggers
-    const checkInterval = setInterval(() => {
-      const activeNudge = window.sessionStorage.getItem("active_nudge");
-      if (activeNudge === "RAIN_CRISIS") {
-        setIsOpen(true);
-        window.sessionStorage.removeItem("active_nudge"); // Clear to prevent loops
-      }
-    }, 1000);
+  const activeNudge = useSystemStore((state) => state.activeNudge);
+  const clearNudge = useSystemStore((state) => state.clearNudge);
 
-    return () => clearInterval(checkInterval);
-  }, []);
+  useEffect(() => {
+    if (activeNudge === "RAIN_CRISIS") {
+      setIsOpen(true);
+      clearNudge(); // Clear immediately so it doesn't reopen
+    }
+  }, [activeNudge, clearNudge]);
 
   const handleIntercept = () => {
     setIsOpen(false);

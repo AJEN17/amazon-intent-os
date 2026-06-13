@@ -16,3 +16,11 @@ body {
   background-color: #d4d4d8;
   border-radius: 9999px;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

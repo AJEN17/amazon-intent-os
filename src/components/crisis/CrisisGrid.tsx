@@ -40,8 +40,8 @@ export default function CrisisGrid() {
 
   return (
     <div className="w-full max-w-md mx-auto px-4">
-      <h2 className="text-sm font-semibold text-neutral-400 uppercase tracking-wider mb-4">
-        Select Active Crisis
+      <h2 className="text-sm font-bold text-neutral-900 tracking-tight mb-3">
+        Amazon Now Urgent Bundles
       </h2>
       <div className="grid grid-cols-2 gap-3">
         {CRISIS_TILES.map((tile) => {
@@ -50,7 +50,7 @@ export default function CrisisGrid() {
             <button
               key={tile.id}
               disabled={isLoading}
-              onClick={() => triggerCrisis(tile.id, tile.categoryTag)}
+              onClick={() => triggerCrisis(tile.id, tile.categoryTag, false)}
               className={`flex flex-col items-start justify-between p-4 h-28 rounded-2xl border transition-all duration-200 active:scale-98 ${tile.color} disabled:opacity-50 disabled:pointer-events-none`}
             >
               <div className="p-2 rounded-xl bg-white bg-opacity-80 shadow-sm">

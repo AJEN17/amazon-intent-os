@@ -1,6 +1,7 @@
 // src/lib/ai/bedrockClient.ts
 import { BedrockRuntimeClient, ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
 import { z } from "zod";
+import { INTENT_ROUTING_PROMPT } from "./promptTemplates";
 
 // 1. Strict mathematical validation for the AI output
 const IntentSchema = z.object({
@@ -26,11 +27,7 @@ export async function extractIntentFromText(userInput: string) {
   // You can easily swap this to "anthropic.claude-3-haiku-20240307-v1:0" for the final demo
   const modelId = "meta.llama3-1-8b-instruct-v1:0"; 
 
-  const systemPrompt = `You are an NLP routing engine for a Quick Commerce app.
-Your only job is to map the user's situation into exactly one macro_crisis category and identify the target_category.
-Valid macro_crisis categories: POWER_CUT_CRISIS, PARTY_CRISIS, BABY_CRISIS, TRAVEL_CRISIS, MEDICINE_CRISIS, RAIN_CRISIS, COOKING_CRISIS, PET_CRISIS.
-Output ONLY a raw JSON object. No markdown, no conversational text, no backticks.
-Example: {"macro_crisis": "POWER_CUT_CRISIS", "target_category": "candles"}`;
+  const systemPrompt = INTENT_ROUTING_PROMPT;
 
   try {
     // AWS ConverseCommand is the modern, unified way to call any Bedrock model

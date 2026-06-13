@@ -11,9 +11,14 @@ import { X, ShieldAlert } from "lucide-react";
 export default function ShowdownDrawer() {
   const isDrawerOpen = useCrisisStore((state) => state.isDrawerOpen);
   const recommendedItems = useCrisisStore((state) => state.recommendedItems);
+  const selectedItems = useCrisisStore((state) => state.selectedItems);
+  const updateItemQuantity = useCrisisStore((state) => state.updateItemQuantity);
   const isLoading = useCrisisStore((state) => state.isLoading);
   const closeDrawer = useCrisisStore((state) => state.closeDrawer);
   const resolveCrisis = useCrisisStore((state) => state.resolveCrisis);
+
+  // Calculate total selected items for potential display
+  const totalQuantity = Object.values(selectedItems).reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <AnimatePresence>
@@ -62,9 +67,18 @@ export default function ShowdownDrawer() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {recommendedItems.map((item, index) => (
-                    <ProductCard key={item.asin} item={item} rank={index + 1} />
-                  ))}
+                  {recommendedItems.map((item, index) => {
+                    const quantity = selectedItems[item.asin]?.quantity || 0;
+                    return (
+                      <ProductCard 
+                        key={item.asin} 
+                        item={item} 
+                        rank={index + 1} 
+                        quantity={quantity}
+                        onUpdateQuantity={(delta) => updateItemQuantity(item, delta)}
+                      />
+                    );
+                  })}
 
                   {/* Replaced static button with the interactive Swipe Component */}
                   <div className="mt-6 pt-2 border-t border-neutral-100">

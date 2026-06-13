@@ -6,20 +6,20 @@ import { rankAndFlagAlternatives } from '@/lib/scoring/rankingEngine';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { target_category, userId } = body;
+    const { target_category, macro_crisis, userId, isSearch } = body;
 
-    if (!target_category) {
-      return NextResponse.json({ error: "Missing target_category" }, { status: 400 });
+    if (!target_category && !macro_crisis) {
+      return NextResponse.json({ error: "Missing target_category or macro_crisis" }, { status: 400 });
     }
 
     // 1. Fetch raw items from the specific category (e.g., "candles" or "raincoat")
-    const inventory = await fetchInventoryByCategory(target_category);
+    const inventory = await fetchInventoryByCategory(target_category, macro_crisis);
     
     // 2. Fetch the user profile (simulated user)
     const userProfile = await fetchUserProfile(userId || "ajendra_001");
 
     // 3. Process items through the advanced scoring engine
-    const rankedItems = rankAndFlagAlternatives(inventory, userProfile);
+    const rankedItems = rankAndFlagAlternatives(inventory, userProfile, isSearch);
 
     // 4. Return to the frontend UI
     return NextResponse.json({ 

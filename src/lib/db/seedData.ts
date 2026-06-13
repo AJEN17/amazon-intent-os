@@ -1100,3 +1100,13 @@ export const mockInventory: ProductItem[] = [
     image_url: "https://example.com/images/natures_miracle.jpg"
   }
 ];
+export const mockPurchaseHistory = [
+  { user_id: "ajendra_001", asin: "B08JVQ3R3Z", quantity: 1, timestamp: "2026-06-10T08:30:00Z" },
+  { user_id: "ajendra_001", asin: "B07XZC4R6S", quantity: 2, timestamp: "2026-06-11T20:15:00Z" },
+  { user_id: "ajendra_001", asin: "B07XZC4R6S", quantity: 1, timestamp: "2026-06-12T20:45:00Z" },
+  { user_id: "ajendra_001", asin: "B07H3GZKBN", quantity: 3, timestamp: "2026-06-05T19:00:00Z" },
+  { user_id: "ajendra_001", asin: "B07H3GZKBN", quantity: 2, timestamp: "2026-06-08T19:30:00Z" },
+  { user_id: "ajendra_001", asin: "B07D3MZYXP", quantity: 1, timestamp: "2026-06-01T07:00:00Z" },
+  { user_id: "ajendra_001", asin: "B07D3MZYXP", quantity: 1, timestamp: "2026-06-05T07:15:00Z" },
+  { user_id: "ajendra_001", asin: "B07D3MZYXP", quantity: 1, timestamp: "2026-06-10T07:30:00Z" }
+];

@@ -3,6 +3,7 @@
 
 import React, { useState } from "react";
 import { CloudRain, Terminal, CheckCircle } from "lucide-react";
+import { useSystemStore } from "@/store/useSystemStore";
 
 export default function AdminControlCenter() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -25,9 +26,9 @@ export default function AdminControlCenter() {
         ]);
         setStatus("Event fired.");
         
-        // Push state directly into sessionStorage to trigger client-side overlays asynchronously
+        // Use global Zustand store instead of sessionStorage
         if (type === "WEATHER_ALERT") {
-          window.sessionStorage.setItem("active_nudge", "RAIN_CRISIS");
+          useSystemStore.getState().triggerNudge("RAIN_CRISIS");
         }
       }
     } catch (err) {
