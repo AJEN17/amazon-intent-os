@@ -6,17 +6,9 @@ export const rankAndFlagAlternatives = (
   userProfile: UserProfile
 ): RankedItem[] => {
   
-  // 1. Calculate base scores and apply dynamic surge pricing
-  let scoredItems: RankedItem[] = inventory.map(item => {
-    // Dynamic Pricing: Base price * surge multiplier
+ let scoredItems: RankedItem[] = inventory.map(item => {
     const currentPrice = item.base_price * item.surge_multiplier;
-
-    // Advanced Scoring Formula:
-    // + Points for high purchase frequency
-    // - Negative points for long ETAs (Speed is king in quick commerce)
-    // - Negative points for high prices
     let score = (item.purchase_frequency_rank * 0.8) - (item.eta_mins * 3) - (currentPrice * 0.05);
-    
     // Personalization Boost: If the user loves this brand, boost its score heavily
     if (userProfile.preferred_brands.includes(item.brand)) {
       score += 75; 

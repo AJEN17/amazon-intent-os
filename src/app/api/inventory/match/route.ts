@@ -6,7 +6,6 @@ import { rankAndFlagAlternatives } from '@/lib/scoring/rankingEngine';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    // We now accept the exact target_category determined by the AI
     const { target_category, userId } = body;
 
     if (!target_category) {

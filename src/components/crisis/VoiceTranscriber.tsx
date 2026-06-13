@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { useCrisisStore } from "@/store/useCrisisStore";
 import { Mic, MicOff, Loader2, Search, SendHorizontal } from "lucide-react";
+import { CrisisCategory } from "@/store/useCrisisStore";
 
 export default function VoiceTranscriber() {
   const triggerCrisis = useCrisisStore((state) => state.triggerCrisis);
@@ -36,6 +37,7 @@ export default function VoiceTranscriber() {
       rec.onresult = (event: any) => {
         const text = event.results[0][0].transcript;
         setTranscript(text);
+        // CHANGE: Call the processIntent function here instead of hardcoded if/else
         processIntent(text);
       };
 
@@ -64,7 +66,7 @@ export default function VoiceTranscriber() {
       }
 
       // 2. Trigger the UI Drawer using the real AI-generated categories
-      triggerCrisis(data.macro_crisis, data.target_category);
+      triggerCrisis(data.macro_crisis as CrisisCategory, data.target_category);
 
     } catch (error) {
       console.error("Failed to route intent:", error);

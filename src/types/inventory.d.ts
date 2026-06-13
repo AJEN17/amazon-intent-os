@@ -1,5 +1,4 @@
 // src/types/inventory.d.ts
-
 export interface ProductItem {
   asin: string;
   brand: string;
@@ -19,15 +18,14 @@ export interface ProductItem {
   image_url: string;
 }
 
-export interface UserProfile {
-  user_id: string;
-  preferred_brands: string[];
-  default_location: string;
-}
-
-// Add this missing interface!
 export interface RankedItem extends ProductItem {
   score: number;
   is_alternative: boolean;
   alternative_message?: string;
+}
+
+export interface UserProfile {
+  user_id: string;
+  preferred_brands: string[];
+  default_location: string;
 }
