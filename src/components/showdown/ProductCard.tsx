@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { RankedItem } from "@/types/inventory";
 import TrustBadge from "./TrustBadge";
 import AlternativeFlag from "./AlternativeFlag";
@@ -42,11 +43,13 @@ export default function ProductCard({ item, rank, quantity, onUpdateQuantity }: 
           <span className="text-xl font-black text-neutral-300 select-none">
             {item.brand.charAt(0)}
           </span>
-          <img 
+          <Image 
             src={item.image_url} 
             alt={item.product_name}
-            onError={(e) => (e.currentTarget.style.display = 'none')}
+            fill
+            sizes="(max-width: 768px) 64px, 64px"
             className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
+            onError={(e) => (e.currentTarget.style.display = 'none')}
           />
         </div>
 
@@ -66,8 +69,8 @@ export default function ProductCard({ item, rank, quantity, onUpdateQuantity }: 
 
         {/* Algorithmic Score Output Badge */}
         <div className="text-right shrink-0">
-          <span className="text-[10px] font-mono font-bold bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-500">
-            Score: {Math.round(item.score)}
+          <span className="text-[10px] font-mono font-bold bg-green-50 px-1.5 py-0.5 rounded text-green-700 border border-green-100">
+            {Math.round(item.score)}% Match
           </span>
         </div>
       </div>
@@ -95,16 +98,18 @@ export default function ProductCard({ item, rank, quantity, onUpdateQuantity }: 
         </div>
       </div>
 
-      {/* Social Proof Indicator */}
-      <div className="mb-3 px-2 py-1.5 bg-[#FF9900]/10 rounded-lg flex items-center gap-1.5 border border-[#FF9900]/20">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF9900] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF9900]"></span>
-        </span>
-        <span className="text-[10px] font-bold text-neutral-800 tracking-tight">
-          High Demand: {(item.purchase_frequency_rank % 30) + 12} people in your area bought this in the last hour.
-        </span>
-      </div>
+      {/* Social Proof Indicator - Only show for top rank */}
+      {rank === 1 && (
+        <div className="mb-3 px-2 py-1.5 bg-[#FF9900]/10 rounded-lg flex items-center gap-1.5 border border-[#FF9900]/20">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF9900] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF9900]"></span>
+          </span>
+          <span className="text-[10px] font-bold text-neutral-800 tracking-tight">
+            High Demand: {(item.purchase_frequency_rank % 30) + 12} people in your area bought this in the last hour.
+          </span>
+        </div>
+      )}
 
       <div className="flex items-center justify-between pt-1">
         {/* Structured AI Sentiment Synthesis Layout */}

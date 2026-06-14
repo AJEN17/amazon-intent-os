@@ -16,8 +16,10 @@ export default function NudgeModal() {
 
   useEffect(() => {
     if (activeNudge === "RAIN_CRISIS") {
-      setIsOpen(true);
-      clearNudge(); // Clear immediately so it doesn't reopen
+      setTimeout(() => {
+        setIsOpen(true);
+        clearNudge();
+      }, 0);
     }
   }, [activeNudge, clearNudge]);
 

@@ -7,15 +7,19 @@ export const rankAndFlagAlternatives = (
   isSearch: boolean = false
 ): RankedItem[] => {
   
- let scoredItems: RankedItem[] = inventory.map(item => {
+  const scoredItems: RankedItem[] = inventory.map(item => {
     const currentPrice = item.base_price * item.surge_multiplier;
-    let baseScore = (item.purchase_frequency_rank * 0.8) - (item.eta_mins * 3) - (currentPrice * 0.05);
-    let score = Math.max(0, baseScore);
     
-    // Personalization Boost: If the user loves this brand, boost its score heavily
+    // New Hackathon Demo Formula: Normalize scores between 1-100 for a realistic "Match Percentage"
+    let baseScore = 80 + (item.purchase_frequency_rank * 0.15) - (item.eta_mins * 0.6) - (currentPrice * 0.005);
+    
+    // Personalization Boost
     if (userProfile.preferred_brands.includes(item.brand)) {
-      score += 75; 
+      baseScore += 12; 
     }
+    
+    // Clamp score strictly between 15 and 99 so it looks like a realistic algorithmic match
+    const score = Math.min(99, Math.max(15, baseScore));
     
     return { 
       ...item, 
@@ -28,7 +32,7 @@ export const rankAndFlagAlternatives = (
   scoredItems.sort((a, b) => b.score - a.score);
 
   // 3. Process stock checks and dynamic alternative flags
-  let finalTopItems: RankedItem[] = [];
+  const finalTopItems: RankedItem[] = [];
   let isAlternativeTriggered = false;
   let originalBrand = "";
 
@@ -43,7 +47,7 @@ export const rankAndFlagAlternatives = (
       continue; 
     }
 
-    let processedItem = { ...currentItem };
+    const processedItem = { ...currentItem };
 
     // Apply the Alternative Banner to the NEXT best item
     if (isSearch && isAlternativeTriggered && finalTopItems.length === 0) {
@@ -52,9 +56,6 @@ export const rankAndFlagAlternatives = (
     }
 
     finalTopItems.push(processedItem);
-    
-    // We strictly return only the Top 3 items for the Showdown Drawer if it's a direct search
-    if (isSearch && finalTopItems.length === 3) break; 
   }
 
   return finalTopItems;

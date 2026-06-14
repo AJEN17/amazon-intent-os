@@ -17,8 +17,6 @@ export default function ShowdownDrawer() {
   const closeDrawer = useCrisisStore((state) => state.closeDrawer);
   const resolveCrisis = useCrisisStore((state) => state.resolveCrisis);
 
-  // Calculate total selected items for potential display
-  const totalQuantity = Object.values(selectedItems).reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <AnimatePresence>

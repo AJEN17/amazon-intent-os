@@ -1,7 +1,7 @@
 // src/components/shared/SwipeToResolve.tsx
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
@@ -11,14 +11,25 @@ interface SwipeToResolveProps {
 
 export default function SwipeToResolve({ onSuccess }: SwipeToResolveProps) {
   const [isCompleted, setIsCompleted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dragMax, setDragMax] = useState(290);
+  
   const x = useMotionValue(0);
   
-  const bgOpacity = useTransform(x, [0, 260], [0.1, 1]);
-  const textOpacity = useTransform(x, [0, 150], [1, 0]);
+  useEffect(() => {
+    if (containerRef.current) {
+      // Container width minus draggable width (48px) and side padding
+      const max = containerRef.current.offsetWidth - 48 - 8;
+      setDragMax(Math.max(100, max)); // ensure positive fallback
+    }
+  }, []);
+
+  const bgOpacity = useTransform(x, [0, dragMax * 0.9], [0.1, 1]);
+  const textOpacity = useTransform(x, [0, dragMax * 0.5], [1, 0]);
 
   const handleDragEnd = () => {
-    if (x.get() > 250) {
-      x.set(290);
+    if (x.get() > dragMax * 0.8) {
+      x.set(dragMax);
       setIsCompleted(true);
       setTimeout(() => {
         onSuccess();
@@ -29,7 +40,7 @@ export default function SwipeToResolve({ onSuccess }: SwipeToResolveProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto h-14 bg-neutral-100 rounded-2xl relative overflow-hidden p-1 border border-neutral-200 select-none">
+    <div ref={containerRef} className="w-full max-w-md mx-auto h-14 bg-neutral-100 rounded-2xl relative overflow-hidden p-1 border border-neutral-200 select-none">
       <motion.div 
         className="absolute inset-0 bg-emerald-600 rounded-2xl pointer-events-none"
         style={{ opacity: bgOpacity }}
@@ -47,7 +58,7 @@ export default function SwipeToResolve({ onSuccess }: SwipeToResolveProps) {
 
             <motion.div
               drag="x"
-              dragConstraints={{ left: 0, right: 290 }}
+              dragConstraints={{ left: 0, right: dragMax }}
               dragElastic={0.1}
               dragMomentum={false}
               style={{ x }}

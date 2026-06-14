@@ -13,11 +13,13 @@ export default function VoiceTranscriber() {
   const setSearchFocused = useSystemStore((state) => state.setSearchFocused);
   
   const [transcript, setTranscript] = useState("");
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const processIntent = async (text: string) => {
     if (!text.trim()) return;
     
     setTranscript(text);
+    setApiError(null);
     useCrisisStore.setState({ isLoading: true });
 
     try {
@@ -37,12 +39,14 @@ export default function VoiceTranscriber() {
       setSearchFocused(false); // Close suggestions on successful search
     } catch (error) {
       console.error("Failed to route intent:", error);
-      setError("AI Processing Failed. Please try again or ensure AWS credentials are set.");
+      setApiError("AI Processing Failed. Please try again or ensure AWS credentials are set.");
       useCrisisStore.setState({ isLoading: false });
     }
   };
 
-  const { isListening, error, toggleListening, setError } = useSpeechToText(processIntent);
+  const { isListening, error: speechError, toggleListening, setError: setSpeechError } = useSpeechToText(processIntent);
+
+  const displayError = apiError || speechError;
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,10 +55,10 @@ export default function VoiceTranscriber() {
 
   return (
     <div className="w-full px-4 mb-8">
-      {error && (
+      {displayError && (
         <div className="mb-3 px-3 py-2 bg-red-50 border border-red-200 text-red-600 rounded-xl flex items-start gap-2 text-xs">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{error}</span>
+          <span>{displayError}</span>
         </div>
       )}
 
@@ -75,7 +79,7 @@ export default function VoiceTranscriber() {
           onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
           onChange={(e) => {
             setTranscript(e.target.value);
-            if (error) setError(null);
+            if (displayError) { setApiError(null); setSpeechError(null); }
           }}
           placeholder="Search Amazon Now..."
           disabled={isLoading}
@@ -99,7 +103,7 @@ export default function VoiceTranscriber() {
           <button
             type="button"
             onClick={() => {
-              if (error) setError(null);
+              if (displayError) { setApiError(null); setSpeechError(null); }
               toggleListening();
             }}
             disabled={isLoading}

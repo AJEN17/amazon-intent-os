@@ -16,10 +16,10 @@ export default function YourUsuals() {
     const loadSuggestions = async () => {
       setLoading(true);
       try {
-        const history = await fetchUserHistory("ajendra_001") as PurchaseRecord[];
+        const history = await fetchUserHistory() as PurchaseRecord[];
         const inventory = await fetchFullInventory();
         const currentHour = new Date().getUTCHours();
-        
+
         const predicted = predictUsuals(history, inventory, currentHour);
         setSuggestions(predicted);
       } catch (error) {
@@ -52,7 +52,7 @@ export default function YourUsuals() {
           Predicted for You
         </span>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-3">
         {suggestions.map((item) => (
           <button
@@ -67,21 +67,22 @@ export default function YourUsuals() {
               <span className="text-2xl font-black text-neutral-300 select-none">
                 {item.brand.charAt(0)}
               </span>
-              <img 
-                src={item.image_url} 
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.image_url}
                 alt={item.product_name}
                 onError={(e) => (e.currentTarget.style.display = 'none')}
                 className="absolute inset-0 w-full h-full object-cover mix-blend-multiply"
               />
             </div>
-            
+
             <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1 line-clamp-1">
               {item.brand}
             </span>
             <h3 className="font-bold text-xs text-neutral-900 leading-snug mb-2 line-clamp-2 min-h-[32px]">
               {item.product_name}
             </h3>
-            
+
             <div className="mt-auto w-full flex items-center justify-between pt-2 border-t border-neutral-50">
               <span className="text-xs font-extrabold tracking-tight">
                 ₹{Math.round(item.base_price * item.surge_multiplier)}
@@ -91,7 +92,7 @@ export default function YourUsuals() {
                 <span className="text-[10px] font-bold">{item.eta_mins}m</span>
               </div>
             </div>
-            
+
             {item.timeMatchBoost && (
               <div className="mt-2 w-full flex items-center gap-1 text-[#FF9900] bg-[#FF9900]/10 px-1.5 py-0.5 rounded text-[9px] font-bold">
                 <TrendingUp className="w-3 h-3" />

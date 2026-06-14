@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true, message: "Webhook processed" });
-  } catch (error) {
-    return NextResponse.json({ success: false }, { status: 500 });
+  } catch {
+    return NextResponse.json({ success: false, error: "Failed to trigger crisis" }, { status: 500 });
   }
 }

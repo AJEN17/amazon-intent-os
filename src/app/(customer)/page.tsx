@@ -9,6 +9,7 @@ import NudgeModal from "@/components/shared/NudgeModal";
 import Header from "@/components/layout/Header";
 import BottomNav from "@/components/layout/BottomNav";
 import YourUsuals from "@/components/suggestions/YourUsuals";
+import WeatherNudge from "@/components/suggestions/WeatherNudge";
 import { useSystemStore } from "@/store/useSystemStore";
 
 export default function ConsumerDashboardPortal() {
@@ -35,6 +36,7 @@ export default function ConsumerDashboardPortal() {
       </div>
 
       {/* Hidden Sheet & Intercept Overlay Layers */}
+      <WeatherNudge />
       <ShowdownDrawer />
       <NudgeModal />
       <BottomNav />
